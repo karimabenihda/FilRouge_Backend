@@ -1,15 +1,14 @@
-# from pydantic import BaseModel, EmailStr
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
 class UserInDB(BaseModel):
     firstname: str
     lastname: str
-    # email: EmailStr
-    email: str
+    email: EmailStr
     password: str
-    role: Optional[str] = "user"
+    role: Optional[str] = "client"
+    created_at:datetime
     
 class UserLogin(BaseModel):
     email: str
@@ -19,7 +18,7 @@ class UserOut(BaseModel):
     id: int
     firstname: str
     lastname: str
-    email: str
+    email: EmailStr
     role: str
     created_at: datetime
     
