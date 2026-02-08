@@ -9,6 +9,7 @@ class UserInDB(BaseModel):
     password: str
     role: Optional[str] = "client"
     created_at:datetime
+    updated_at:datetime
     
 class UserLogin(BaseModel):
     email: str
@@ -21,6 +22,13 @@ class UserOut(BaseModel):
     email: EmailStr
     role: str
     created_at: datetime
+
+class UserUpdate(BaseModel):
+    firstname: str
+    lastname: str
+    email: EmailStr
+    password:str
+    updated_at: datetime
     
 class Token(BaseModel):
     access_token: str
