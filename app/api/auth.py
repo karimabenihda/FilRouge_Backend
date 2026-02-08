@@ -1,13 +1,13 @@
-from schemas.User import UserInDB, Token, UserLogin
-from models.User import User
+from app.schemas.User import UserInDB, Token, UserLogin,UserUpdate
+from app.models.User import User
 from passlib.context import CryptContext
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import jwt
-from schemas.User import Token,GoogleToken
+from app.schemas.User import Token,GoogleToken
 import os
-from core.database import get_db
+from app.core.database import get_db
 from dotenv import load_dotenv 
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -58,35 +58,62 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
 
 # ----- google-login -----
-@router.post('google_login')
-def google_login(token_data: GoogleToken, db: Session = Depends(get_db)):
+@router.post("/google-login")
+def google_login(
+    token_data: GoogleToken,
+    db: Session = Depends(get_db)
+):
     try:
-        idinfo = id_token.verify_oauth2_token(token_data.token, requests.Request(), CLIENT_ID)
-        email = idinfo.get("email")
-        name = idinfo.get("name")
+        idinfo = id_token.verify_oauth2_token(
+            token_data.token,
+            requests.Request(),
+            CLIENT_ID
+        )
 
-        # Vérifier si l'utilisateur existe dans la DB
+        # Security check
+        if idinfo["aud"] != CLIENT_ID:
+            raise ValueError("Invalid audience")
+
+        email = idinfo.get("email")
+        google_id = idinfo.get("sub")
+        firstname = idinfo.get("given_name", "")
+        lastname = idinfo.get("family_name", "")
+
+        if not email:
+            raise HTTPException(status_code=400, detail="Email not provided by Google")
+
         user = db.query(User).filter(User.email == email).first()
+
         if not user:
-            # Créer un nouvel utilisateur si pas trouvé
             user = User(
-                firstname=name,
-                lastname="",
+                firstname=firstname,
+                lastname=lastname,
                 email=email,
-                password="",  # pas besoin de mot de passe
-                role="client"
+                google_id=google_id,
+                role="client",
+                auth_provider="google"
             )
             db.add(user)
             db.commit()
             db.refresh(user)
 
-        # Générer un JWT pour ton app
-        access_token = create_access_token({"sub": email})
-        return {"access_token": access_token, "token_type": "bearer"}
+        access_token = create_access_token(
+            data={"sub": str(user.id)}
+        )
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "firstname": user.firstname,
+                "role": user.role
+            }
+        }
 
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid Google token")
- 
+        raise HTTPException(status_code=401, detail="Invalid Google token")
 
 
 # ----- Register -----
@@ -110,3 +137,26 @@ def register(user: UserInDB, db: Session = Depends(get_db)):
     db.refresh(new_user)
     
     return {"message": "User created successfully", "user_id": new_user.id}
+
+# ----- Update -----
+@router.put("/update_user/{user_id}")
+def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.id == user_id).first()
+    if not existing_user:
+        raise HTTPException(status_code=400, detail="User not exists")
+    
+    existing_user.firstname=user.firstname
+    existing_user.lastname=user.lastname
+    existing_user.email=user.email
+    existing_user.password=hash_password(user.password)
+    existing_user.updated_at=datetime.utcnow()
+    db.commit()
+    db.refresh(existing_user)
+    
+    return {"message": "User updated successfully", "user_id": existing_user.firstname}
+
+
+
+@router.post("/logout")
+def logout():
+    return {"message": "Logged out"}

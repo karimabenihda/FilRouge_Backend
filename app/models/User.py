@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-from core.database import Base
+from app.core.database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -10,7 +10,11 @@ class User(Base):
     lastname = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    password = Column(String, nullable=True)
+    google_id = Column(String, unique=True, nullable=True)
+    auth_provider = Column(String, default="local")
     role = Column(String(50), nullable=False, default="client")
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=None)
 
  
