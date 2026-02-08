@@ -21,9 +21,9 @@ ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))  # convert to int
 CLIENT_ID=os.getenv("CLIENT_ID")
 
-router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+auth_router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # ----- Helpers -----
 def hash_password(password: str):
@@ -47,7 +47,7 @@ def create_access_token(data: dict, expires_delta: int = None):
     return encoded_jwt
 
 # ----- Login -----
-@router.post("/login", response_model=Token)
+@auth_router.post("/login", response_model=Token)
 def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.password):
@@ -58,7 +58,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
 
 # ----- google-login -----
-@router.post("/google-login")
+@auth_router.post("/google-login")
 def google_login(
     token_data: GoogleToken,
     db: Session = Depends(get_db)
@@ -117,7 +117,7 @@ def google_login(
 
 
 # ----- Register -----
-@router.post("/register")
+@auth_router.post("/register")
 def register(user: UserInDB, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
@@ -139,7 +139,7 @@ def register(user: UserInDB, db: Session = Depends(get_db)):
     return {"message": "User created successfully", "user_id": new_user.id}
 
 # ----- Update -----
-@router.put("/update_user/{user_id}")
+@auth_router.put("/update_user/{user_id}")
 def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.id == user_id).first()
     if not existing_user:
@@ -157,6 +157,6 @@ def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db)):
 
 
 
-@router.post("/logout")
+@auth_router.post("/logout")
 def logout():
     return {"message": "Logged out"}

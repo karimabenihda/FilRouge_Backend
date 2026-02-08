@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, DateTime,Float,ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-from core.database import Base
+from app.core.database import Base
 from sqlalchemy.orm import relationship
 
 class Category(Base):
@@ -20,9 +20,9 @@ class Furniture(Base):
     image=Column(String, nullable=False)
     price=Column(Float, nullable=False)
     stock=Column(Integer,nullable=False)
-    views=Column(Integer,nullable=False)
-    id_category=Column(Integer,ForeignKey(Category.id) ,nullable=False)
-    created_at=datetime
-    updated_at=datetime
+    views=Column(Integer,nullable=True)
+    id_category=Column(Integer,ForeignKey("categories.id"),nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     category=relationship("Category",back_populates="furnitures")
