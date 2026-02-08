@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-# from api.auth import router
-from api.sales import router
-from core.database import  Base, engine
+
+from app.api.auth import auth_router
+from app.api.sales import sales_router
+from app.core.database import  Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,5 +23,6 @@ app.add_middleware(
     allow_headers=["*"],         
 )
 
-app.include_router(router,prefix="/api/sales")
+app.include_router(auth_router,prefix="/api/auth", tags=["Auth"])
+app.include_router(sales_router,prefix="/api/sales", tags=["Sales"])
  

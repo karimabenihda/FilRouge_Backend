@@ -1,10 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
 
 
 class CategoryInDB(BaseModel):
     name:str
+    description:str
 
 
 class FurnitureInDB(BaseModel):
@@ -13,9 +13,7 @@ class FurnitureInDB(BaseModel):
     image:str
     price:float
     stock:int
-    views:int
-    category:CategoryInDB
-    created_at:datetime
+    id_category: int
 
 class FurnitureUpdate(BaseModel):
     name:str
@@ -23,6 +21,4 @@ class FurnitureUpdate(BaseModel):
     image:str
     price:float
     stock:int
-    views:int
-    category:CategoryInDB
-    updated_at:datetime
+    id_category:int
