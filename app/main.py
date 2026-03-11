@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.api.auth import auth_router
 from app.api.sales import sales_router
+from app.api.furnitures import furnitures_router
 from app.core.database import  Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,5 +25,6 @@ app.add_middleware(
 )
 
 app.include_router(auth_router,prefix="/api/auth", tags=["Auth"])
-app.include_router(sales_router,prefix="/api/sales", tags=["Sales"])
+app.include_router(furnitures_router,prefix="/api/furnitures", tags=["Furnitures"])
+app.include_router(sales_router,prefix="/api/Sales", tags=["Sales"])
  
