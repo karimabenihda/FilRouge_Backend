@@ -286,7 +286,7 @@ STATUS_FLOW = ["pending", "confirmed", "preparing", "shipped", "delivering", "de
 
 # ──────────────── GET ALL ORDERS FOR CUSTOMER ────────────────
 
-@sales_router.get("/{customer_id}", response_model=OrderTrackingResponse)
+@sales_router.get("/get_orders/{customer_id}", response_model=OrderTrackingResponse)
 def get_orders(customer_id: int, db: Session = Depends(get_db)):
     orders = (
         db.query(Order)
