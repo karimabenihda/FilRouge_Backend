@@ -8,7 +8,6 @@ from app.schemas.Furniture import (
     FurnitureInDB, FurnitureUpdate, FurnitureOut,
     CategoryInDB, CategoryOut, SubCategoryInDB, SubCategoryOut
 )
-from app.Middleware.auth_middleware import admin_required
 from app.api.auth import get_current_user
 
 
@@ -20,7 +19,7 @@ def get_furnitures(db: Session = Depends(get_db)):
     return db.query(Furniture).all()
 
 
-@furnitures_router.post("/furnitures", response_model=FurnitureOut, dependencies=[Depends(admin_required)])
+@furnitures_router.post("/furnitures", response_model=FurnitureOut)
 def add_furniture(furniture: FurnitureInDB, db: Session = Depends(get_db),user=Depends(get_current_user)):
     new_furniture = Furniture(
         ProductName=furniture.ProductName,
@@ -38,7 +37,7 @@ def add_furniture(furniture: FurnitureInDB, db: Session = Depends(get_db),user=D
     return new_furniture
 
 
-@furnitures_router.put("/furnitures/{furniture_id}", response_model=FurnitureOut, dependencies=[Depends(admin_required)])
+@furnitures_router.put("/furnitures/{furniture_id}", response_model=FurnitureOut)
 def update_furniture(furniture_id: int, new_data: FurnitureUpdate, db: Session = Depends(get_db),user=Depends(get_current_user)):
     furniture = db.query(Furniture).filter(Furniture.ProductID == furniture_id).first()
     if not furniture:
@@ -57,7 +56,7 @@ def update_furniture(furniture_id: int, new_data: FurnitureUpdate, db: Session =
     return furniture
 
 
-@furnitures_router.delete("/furnitures/{furniture_id}", dependencies=[Depends(admin_required)])
+@furnitures_router.delete("/furnitures/{furniture_id}")
 def delete_furniture(furniture_id: int, db: Session = Depends(get_db),    user=Depends(get_current_user)):
     furniture = db.query(Furniture).filter(Furniture.ProductID == furniture_id).first()
     if not furniture:
@@ -73,7 +72,7 @@ def get_categories(db: Session = Depends(get_db)):
     return db.query(Category).all()
 
 
-@furnitures_router.post("/categories", response_model=CategoryOut, dependencies=[Depends(admin_required)])
+@furnitures_router.post("/categories", response_model=CategoryOut)
 def add_category(category: CategoryInDB, db: Session = Depends(get_db),user=Depends(get_current_user)):
     new_category = Category(
         name=category.name
@@ -90,7 +89,7 @@ def get_subcategories(db: Session = Depends(get_db)):
     return db.query(SubCategory).all()
 
 
-@furnitures_router.post("/subcategories", response_model=SubCategoryOut, dependencies=[Depends(admin_required)])
+@furnitures_router.post("/subcategories", response_model=SubCategoryOut)
 def add_subcategory(subcategory: SubCategoryInDB, db: Session = Depends(get_db),user=Depends(get_current_user)):
     new_subcategory = SubCategory(
         name=subcategory.name,

@@ -1,15 +1,13 @@
-from sqlalchemy import Column, String, Integer, DateTime,Float,ForeignKey,ClauseList
-from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
-from core.database import Base
+from sqlalchemy import Column, String, Integer, DateTime, Float, ForeignKey
+from app.core.database import Base
 from sqlalchemy.orm import relationship
 
    
 class Recommendation(Base):
-    __tablename__="recommendation"
+    __tablename__ = "recommendation"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    CustomerID =Column(String,nullable=False)
-    ProductID =Column(String,ClauseList,  nullable=False)
+    CustomerID = Column(String, nullable=False)
+    ProductID = Column(String, nullable=False)
 
 
 class SalesPrediction(Base):

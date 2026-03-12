@@ -12,11 +12,13 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 
 security = HTTPBearer()
-load_dotenv()
+from pathlib import Path
+dotenv_path = Path(__file__).parent.parent / ".env"
+load_dotenv(dotenv_path=dotenv_path)
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))  # convert to int
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
 CLIENT_ID=os.getenv("CLIENT_ID")
 
 
@@ -39,23 +41,22 @@ def create_access_token(data: dict, expires_delta: int = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# def get_current_user(request: Request):
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-
-    # token = request.headers.get("Authorization")
     token = credentials.credentials
 
     if not token:
         raise HTTPException(status_code=401, detail="Token missing")
 
-    token = token.replace("Bearer ", "")
-
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    return payload
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.JWTError as e:
+        print(f"JWT Error: {str(e)}") # Log the error on the server
+        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Authentication error")
 
 
 # ----- Login -----
