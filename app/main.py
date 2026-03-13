@@ -10,6 +10,8 @@ from app.models.Inventory import InventoryLog
 from app.models.Prediction import Recommendation, SalesPrediction
 from app.core.database import Base, engine
 from app.api.inventory import inventory_router
+from app.api.admin.orders import orders_router
+
 app = FastAPI()
 
 origins = [
@@ -31,3 +33,6 @@ app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(furnitures_router, prefix="/api/furnitures", tags=["furnitures"])
 app.include_router(sales_router, prefix="/api/sales", tags=["sales"])
 app.include_router(inventory_router, prefix="/api/inventory", tags=["inventory"])
+# app.include_router(orders_router, prefix="/api/orders", tags=["orders"])
+# app.include_router(orders_router, prefix="/api/orders")
+app.include_router(orders_router)

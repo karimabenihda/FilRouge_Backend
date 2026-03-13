@@ -1,4 +1,4 @@
-from pydantic import BaseModel,Field
+from pydantic import BaseModel,Field, ConfigDict
 from datetime import datetime
 from typing import Optional
 from enum import Enum
@@ -146,14 +146,12 @@ class OrderSummaryResponse(BaseModel):
 
 
 class ProductInfo(BaseModel):
-    ProductID:   int
-    ProductName: str
-    price:       float
+    ProductID:   Optional[int] = None
+    ProductName: Optional[str] = None
+    name:        Optional[str] = None
+    price:       Optional[float] = None
     image:       Optional[str] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class OrderDetailResponse(BaseModel):
     id:          int
@@ -164,27 +162,44 @@ class OrderDetailResponse(BaseModel):
     product_qte: int
     created_at:  datetime
     product:     Optional[ProductInfo] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class PaymentInfo(BaseModel):
-    amount:     float
-    method:     str
-    status:     str
-    card_last4: Optional[str] = None
-
-    class Config:
-        from_attributes = True
-
-
+    id:             Optional[int]      = None
+    amount:         Optional[float]    = None
+    method:         Optional[str]      = None
+    payment_method: Optional[str]      = None
+    status:         Optional[str]      = None
+    card_last4:     Optional[str]      = None
+    created_at:     Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
 
 class OrderTrackingResponse(BaseModel):
     orders:      List[OrderDetailResponse]
     total_price: float
     payment:     Optional[PaymentInfo] = None
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+class AdminOrderTrackingResponse(BaseModel):
+    orders:      List[OrderDetailResponse]
+    total_price: float
+    payment:     Optional[PaymentInfo] = None
+
+
+
+class AdminOrderItem(BaseModel):
+    id:            int
+    product_id:    int
+    customer_id:   int
+    status:        str
+    totalprice:    float
+    product_qte:   int
+    created_at:    datetime
+    product_name:  Optional[str] = None
+    product_image: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+class StatusUpdateResponse(BaseModel):
+    order_id:   int
+    new_status: str
 

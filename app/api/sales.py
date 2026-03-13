@@ -11,6 +11,29 @@ from app.api.auth import get_current_user
 sales_router = APIRouter()
 
 
+# ──────────────── GET ALL ORDERS (ADMIN) ────────────────
+
+@sales_router.get("/orders/all")
+def get_all_orders(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    """Admin: get all orders across all customers with product info"""
+    orders = db.query(Order).order_by(Order.created_at.desc()).all()
+    result = []
+    for o in orders:
+        product = db.query(Furniture).filter(Furniture.ProductID == o.product_id).first()
+        result.append({
+            "id": o.id,
+            "customer_id": o.customer_id,
+            "product_id": o.product_id,
+            "product_name": product.ProductName if product else f"Product #{o.product_id}",
+            "product_image": product.image if product else None,
+            "status": o.status,
+            "totalprice": o.totalprice,
+            "product_qte": o.product_qte,
+            "created_at": o.created_at.isoformat(),
+        })
+    return result
+
+
 # ──────────────── GET CART BY CUSTOMER ────────────────
 
 @sales_router.get("/{customer_id}", response_model=List[CartResponse])
