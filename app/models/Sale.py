@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer,Enum, DateTime, Float, ForeignKey
+from sqlalchemy import Column, String, Integer,Enum, DateTime, Float, ForeignKey,Date
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from app.core.database import Base
@@ -38,8 +38,6 @@ class Order(Base):
 
 
 
-
-
 class PaymentStatus(str, enum.Enum):
     pending   = "pending"
     completed = "completed"
@@ -71,57 +69,32 @@ class Payment(Base):
     customer = relationship("User",  backref="payments")
 
 
+class Sale(Base):
+    __tablename__ = "sales"
 
+    row_id = Column(Integer, primary_key=True, index=True)
 
+    order_id = Column(String)
+    order_date = Column(Date)
+    ship_date = Column(Date)
+    ship_mode = Column(String)
 
+    customer_id = Column(String)
+    customer_name = Column(String)
+    segment = Column(String)
 
-# class FurnitureSales(Base):
-    # __tablename__="recommendation"
-    # RowID =Column(Integer,  nullable=False)
-    # OrderID =Column(String,nullable=False)
-    # OrderDate =Column(String,nullable=False)
-    # ShipDate =Column(String,nullable=False)
-    # ShipMode =Column(String,nullable=False)
-    # CustomerID =Column(String,nullable=False)
-    # CustomerName=Column(String,nullable=False)
-    # Segment =Column(String,nullable=False)
-    # Country =Column(String,nullable=False)
-    # City =Column(String,nullable=False)
-    # State =Column(String,nullable=False)
-    # PostalCode=Column(Integer,  nullable=False)
-    # Region =Column(String,nullable=False)
-    # ProductID =Column(String,nullable=False)
-    # Category =Column(String,nullable=False)
-    # SubCategory =Column(String,nullable=False)
-    # ProductName =Column(String,nullable=False)
-    # Sales =Column(Float,  nullable=False)
-    # Quantity  =Column(Integer,  nullable=False)
-    # Discount=Column(Float,  nullable=False)
-    # Profit  =Column(Float,  nullable=False)
-    # season =Column(String,nullable=False)
-    # brand =Column(String,nullable=False)
+    city = Column(String)
+    region = Column(String)
 
-# class Sales(Base):
-#     __tablename__="sales"
-#     id = Column(Integer, primary_key=True, autoincrement=True)  # internal PK
-#     OrderID = Column(String(50), nullable=False)
-#     OrderDate = Column(DateTime, nullable=False)
-#     ShipDate = Column(DateTime, nullable=False)
-#     ShipMode = Column(String(50), nullable=False)
-#     CustomerID = Column(String(50), nullable=False)
-#     CustomerName = Column(String(100), nullable=False)
-#     Segment = Column(String(50), nullable=False)
-#     City = Column(String(50), nullable=False)
-#     Region = Column(String(50), nullable=False)
-#     ProductID = Column(String(50), nullable=False)
-#     Category = Column(String(50), nullable=False)
-#     SubCategory = Column(String(50), nullable=False)
-#     ProductName = Column(String(100), nullable=False)
-#     Sales = Column(Float, nullable=False)
-#     Quantity = Column(Integer, nullable=False)
-#     Discount = Column(Float, nullable=True)
-#     Profit = Column(Float, nullable=True)
-#     season = Column(String(20), nullable=True)
-#     brand = Column(String(50), nullable=True)
-    
-    
+    product_id = Column(String)
+    category = Column(String)
+    sub_category = Column(String)
+    product_name = Column(String)
+
+    sales = Column(Float)
+    quantity = Column(Integer)
+    discount = Column(Float)
+    profit = Column(Float)
+
+    season = Column(String)
+    brand = Column(String)

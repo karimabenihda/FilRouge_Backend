@@ -1,5 +1,5 @@
 from pydantic import BaseModel,Field, ConfigDict
-from datetime import datetime
+from datetime import datetime,date
 from typing import Optional
 from enum import Enum
 from typing import List
@@ -203,3 +203,46 @@ class StatusUpdateResponse(BaseModel):
     order_id:   int
     new_status: str
 
+
+
+class SaleCreate(BaseModel):
+    row_id: int
+    order_id: str
+    order_date: date
+    ship_date: date
+    ship_mode: str
+
+    customer_id: str
+    customer_name: str
+    segment: str
+
+    city: str
+    region: str
+
+    product_id: str
+    category: str
+    sub_category: str
+    product_name: str
+
+    sales: float
+    quantity: int
+    discount: float
+    profit: float
+
+    season: str
+    brand: str
+    
+    
+class MonthlySalesItem(BaseModel):
+    year:         int
+    month:        int
+    total_sales:  float
+    total_profit: float
+    total_orders: int
+
+class YearlySalesItem(BaseModel):
+    year:         int
+    total_sales:  float
+    total_profit: float
+    total_orders: int
+    months:       List[MonthlySalesItem]
