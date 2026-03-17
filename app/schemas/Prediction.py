@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List
+from typing import List,Optional
 
 class NextMonthPrediction(BaseModel):
     last_month:       str    # "YYYY-MM" — last month in the data
@@ -9,7 +9,7 @@ class NextMonthPrediction(BaseModel):
     predicted_sales:  float  # LSTM prediction in real dollars
     change_pct:       float  # % change vs last known month
     r2_score:         float  # model accuracy from notebook: 0.6337
-
+    # suggestion_plan: Optional[str] = None
 
 
 
