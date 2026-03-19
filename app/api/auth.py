@@ -1,4 +1,4 @@
-from app.schemas.User import UserInDB, Token, UserLogin,UserUpdate
+from app.schemas.User import UserInDB, Token, UserLogin,UserUpdate,UserOut
 from app.models.User import User
 from passlib.context import CryptContext
 from fastapi import APIRouter, Depends, HTTPException,Request
@@ -92,7 +92,7 @@ def register(user: UserInDB, db: Session = Depends(get_db)):
         email=user.email,
         password=hash_password(user.password),
         role=user.role,
-        created_at=datetime.utcnow(),
+        # created_at = datetime.utcnow(),
     )
     
     db.add(new_user)
@@ -118,7 +118,20 @@ def update_user(user_id: int,user: UserUpdate, db: Session = Depends(get_db)):
     
     return {"message": "User updated successfully", "user_id": existing_user.firstname}
 
+# @auth_router.get("/me", response_model=UserOut)
+# def get_me(db: Session = Depends(get_db), user=Depends(get_current_user)):
+#     existing = db.query(User).filter(User.id == user.id).first()
+#     if not existing:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return existing
 
+@auth_router.get("/me", response_model=UserOut)
+def get_me(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    user_id = user["user_id"]  # ← JWT stores it as "user_id" not "id"
+    existing = db.query(User).filter(User.id == user_id).first()
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    return existing
 
 @auth_router.post("/logout")
 def logout():

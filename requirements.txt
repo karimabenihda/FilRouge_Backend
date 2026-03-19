@@ -1,17 +1,26 @@
-matplotlib
+# matplotlib
 # spacy==3.7.2
-en-core-web-sm==3.7.1
+# en-core-web-sm==3.7.1
+# ruff 
+# opentelemetry-sdk 
+# opentelemetry-instrumentation-fastapi 
+# opentelemetry-exporter-otlp
+# azure-ai-textanalytics 
+# pyodbc
 numpy==1.24.4
 fastapi 
 uvicorn 
-sqlalchemy 
-pyodbc 
+sqlalchemy
+pypdf 
+pydantic
+joblib
+argon2-cffi  
+psycopg2-binary 
+passlib 
+python-multipart
 pandas==2.0.3
 scikit-learn 
-azure-ai-textanalytics 
 python-dotenv 
 pytest 
-ruff 
-opentelemetry-sdk 
-opentelemetry-instrumentation-fastapi 
-opentelemetry-exporter-otlp
+tensorflow 
+keras

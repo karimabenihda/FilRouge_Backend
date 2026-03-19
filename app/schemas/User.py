@@ -8,8 +8,8 @@ class UserInDB(BaseModel):
     email: EmailStr
     password: str
     role: Optional[str] = "client"
-    created_at:datetime
-    updated_at:datetime
+    # created_at:datetime
+    # updated_at:datetime
     
 class UserLogin(BaseModel):
     email: str

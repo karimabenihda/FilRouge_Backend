@@ -17,7 +17,7 @@ class CategoryOut(CategoryBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes=True
 
 
 # ---------------- SUBCATEGORY ----------------
@@ -36,7 +36,7 @@ class SubCategoryOut(SubCategoryBase):
     category: Optional[CategoryOut] = None
 
     class Config:
-        orm_mode = True
+        from_attributes=True
 
 
 # ---------------- FURNITURE ----------------
@@ -76,4 +76,4 @@ class FurnitureOut(FurnitureBase):
     subcategory: Optional[SubCategoryOut] = None
 
     class Config:
-        orm_mode = True
+        from_attributes=True
